@@ -3,8 +3,6 @@ import { fromLonLat, toLonLat } from "ol/proj";
 import { useRef, useState } from "react";
 import {
   RFeature,
-  RLayerTile,
-  RLayerTileWebGL,
   RLayerVector,
   RMap,
   ROSM,
