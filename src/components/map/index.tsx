@@ -1,12 +1,14 @@
-import { LineString, Point } from "ol/geom";
+import { Geometry, LineString, Point } from "ol/geom";
 import { fromLonLat, toLonLat } from "ol/proj";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   RFeature,
+  RGeolocation,
   RLayerVector,
   RMap,
   ROSM,
   ROverlay,
+  useOL,
 } from "rlayers";
 import { RStyle, RIcon } from "rlayers/style";
 import "./index.css";
@@ -19,9 +21,11 @@ import {
 } from "@ionic/react";
 import { add } from "ionicons/icons";
 import busIcon from "../../utils/icons/bus.png";
+import personStanding from "../../utils/icons/person-standing.png";
+import { Geolocation as OLGeoLoc } from "ol";
 
-export function Map() {
-  const mapRef = useRef<RMap | null>(null);
+export default function Map() {
+  const { map } = useOL();
   const [start, setStart] = useState<[number, number] | null>(null);
   const [destination, setDestination] = useState<[number, number] | null>(null);
 
@@ -29,6 +33,9 @@ export function Map() {
   const [destinationAddress, setDestinationAddress] = useState<string>("");
 
   const [route, setRoute] = useState<[number, number][] | null>(null);
+
+  const [pos, setPos] = useState(new Point(fromLonLat([0, 0])));
+  const [accuracy, setAccuracy] = useState(undefined as Geometry | undefined);
 
   async function getAddressFromCoordinates(coords: [number, number]) {
     const [lon, lat] = coords;
@@ -103,19 +110,19 @@ export function Map() {
       <IonButton onClick={() => searchByAddress(startAddress, "start")}>
         Buscar
       </IonButton>
-      <IonSearchbar
+      {/* <IonSearchbar
         value={destinationAddress}
         onIonInput={(e) => setDestinationAddress(e.detail.value!)}
         debounce={500}
         placeholder="DESTINO"
         showClearButton="focus"
-      />
-      <IonButton
+      /> */}
+      {/* <IonButton
         onClick={() => searchByAddress(destinationAddress, "destination")}
       >
         Buscar
-      </IonButton>
-      <IonButton onClick={getRoute}>Calcular Rota</IonButton>
+      </IonButton> */}
+      {/* <IonButton onClick={getRoute}>Calcular Rota</IonButton> */}
 
       <IonFab slot="fixed" vertical="bottom" horizontal="center">
         <IonFabButton>
@@ -125,7 +132,6 @@ export function Map() {
 
       <RMap
         key="map"
-        ref={mapRef}
         width={"100%"}
         height={"100%"}
         noDefaultControls={true}
@@ -160,9 +166,11 @@ export function Map() {
               }}
             >
               <RStyle>
-                <RIcon src={busIcon}  />
+                <RIcon src={personStanding} />
               </RStyle>
-              <ROverlay className="pointer-events-none absolute w-max select-none rounded-lg border border-gray-300 bg-white p-4 font-sans shadow-md">Ponto de inicio</ROverlay>
+              <ROverlay className="pointer-events-none absolute w-max select-none rounded-lg border border-gray-300 bg-white p-4 font-sans shadow-md">
+                Ponto de inicio
+              </ROverlay>
             </RFeature>
           )}
           {destination && (
@@ -197,6 +205,26 @@ export function Map() {
               geometry={new LineString(route.map((coord) => fromLonLat(coord)))}
             />
           )}
+
+          {/* <RGeolocation
+            tracking={true}
+            trackingOptions={{ enableHighAccuracy: true }}
+            onChange={useCallback(
+              (e) => {
+                const geoloc = e.target as OLGeoLoc;
+                setPos(new Point(geoloc.getPosition()));
+                setAccuracy(geoloc.getAccuracyGeometry());
+
+                map.getView().fit(geoloc.getAccuracyGeometry(), {
+                  duration: 250,
+                  maxZoom: 15,
+                });
+              },
+              [map]
+            )}
+          /> */}
+          <RFeature geometry={pos}></RFeature>
+          <RFeature geometry={accuracy}></RFeature>
         </RLayerVector>
       </RMap>
     </>
