@@ -20,9 +20,10 @@ import {
   IonSearchbar,
 } from "@ionic/react";
 import { add } from "ionicons/icons";
-import busIcon from "../../utils/icons/bus.png";
-import personStanding from "../../utils/icons/person-standing.png";
+import personStandingIcon from "../../utils/icons/person-standing.png";
+import flagIcon from "../../utils/icons/flag.png";
 import { Geolocation as OLGeoLoc } from "ol";
+import AnimatedRoute from "../animated-route";
 
 export default function Map() {
   const { map } = useOL();
@@ -110,19 +111,19 @@ export default function Map() {
       <IonButton onClick={() => searchByAddress(startAddress, "start")}>
         Buscar
       </IonButton>
-      {/* <IonSearchbar
+      <IonSearchbar
         value={destinationAddress}
         onIonInput={(e) => setDestinationAddress(e.detail.value!)}
         debounce={500}
         placeholder="DESTINO"
         showClearButton="focus"
-      /> */}
-      {/* <IonButton
+      />
+      <IonButton
         onClick={() => searchByAddress(destinationAddress, "destination")}
       >
         Buscar
-      </IonButton> */}
-      {/* <IonButton onClick={getRoute}>Calcular Rota</IonButton> */}
+      </IonButton>
+      <IonButton onClick={getRoute}>Calcular Rota</IonButton>
 
       <IonFab slot="fixed" vertical="bottom" horizontal="center">
         <IonFabButton>
@@ -166,9 +167,9 @@ export default function Map() {
               }}
             >
               <RStyle>
-                <RIcon src={personStanding} />
+                <RIcon src={personStandingIcon} />
               </RStyle>
-              <ROverlay className="pointer-events-none absolute w-max select-none rounded-lg border border-gray-300 bg-white p-4 font-sans shadow-md">
+              <ROverlay className="example-overlay">
                 Ponto de inicio
               </ROverlay>
             </RFeature>
@@ -197,13 +198,14 @@ export default function Map() {
                 return false;
               }}
             >
+              <RStyle>
+                <RIcon src={flagIcon} />
+              </RStyle>
               <ROverlay className="example-overlay">Ponto de destino</ROverlay>
             </RFeature>
           )}
           {route && (
-            <RFeature
-              geometry={new LineString(route.map((coord) => fromLonLat(coord)))}
-            />
+            <AnimatedRoute route={new LineString(route.map((coord) => fromLonLat(coord)))}/>
           )}
 
           {/* <RGeolocation
