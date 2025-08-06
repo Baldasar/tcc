@@ -4,13 +4,14 @@ import { useCallback, useRef, useState } from "react";
 import {
   RFeature,
   RGeolocation,
+  RLayerTileWebGL,
   RLayerVector,
   RMap,
   ROSM,
   ROverlay,
   useOL,
 } from "rlayers";
-import { RStyle, RIcon } from "rlayers/style";
+import { RStyle, RIcon, RStroke } from "rlayers/style";
 import "./index.css";
 import {
   IonButton,
@@ -24,6 +25,8 @@ import personStandingIcon from "../../utils/icons/person-standing.png";
 import flagIcon from "../../utils/icons/flag.png";
 import { Geolocation as OLGeoLoc } from "ol";
 import AnimatedRoute from "../animated-route";
+import GeoJSON from "ol/format/GeoJSON";
+
 
 export default function Map() {
   const { map } = useOL();
@@ -111,6 +114,7 @@ export default function Map() {
       <IonButton onClick={() => searchByAddress(startAddress, "start")}>
         Buscar
       </IonButton>
+
       <IonSearchbar
         value={destinationAddress}
         onIonInput={(e) => setDestinationAddress(e.detail.value!)}
@@ -144,6 +148,13 @@ export default function Map() {
             "https://apps.geo360.com.br/dados/criciuma/2024_v2_tiles/{z}/{x}/{y}.webp"
           }
         /> */}
+
+        {/* <RLayerTileWebGL
+          url={
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          }
+        /> */}
+
         <RLayerVector zIndex={10}>
           {start && (
             <RFeature
@@ -169,9 +180,7 @@ export default function Map() {
               <RStyle>
                 <RIcon src={personStandingIcon} />
               </RStyle>
-              <ROverlay className="example-overlay">
-                Ponto de inicio
-              </ROverlay>
+              <ROverlay className="example-overlay">Ponto de inicio</ROverlay>
             </RFeature>
           )}
           {destination && (
@@ -205,7 +214,9 @@ export default function Map() {
             </RFeature>
           )}
           {route && (
-            <AnimatedRoute route={new LineString(route.map((coord) => fromLonLat(coord)))}/>
+            <AnimatedRoute
+              route={new LineString(route.map((coord) => fromLonLat(coord)))}
+            />
           )}
 
           {/* <RGeolocation

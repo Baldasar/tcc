@@ -7,22 +7,23 @@ import Map from "../../components/map";
 import { useIntroStore } from "../../state/intro";
 
 export function Home() {
-  const hasSeenIntro = useIntroStore((state) => state.hasSeenIntro);
-  const setHasSeenIntro = useIntroStore((state) => state.setHasSeenIntro);
+  const hasSeenIntro = true;
+  // const hasSeenIntro = useIntroStore((state) => state.hasSeenIntro);
+  // const setHasSeenIntro = useIntroStore((state) => state.setHasSeenIntro);
 
-  const init = async () => {
-    try {
-      await makeDatabase();
-      const viewed = await getDisplayIntro();
-      setHasSeenIntro(viewed);
-    } catch (error) {
-      console.error("An error occurred during initialization:", error);
-    }
-  };
+  // const init = async () => {
+  //   try {
+  //     await makeDatabase();
+  //     const viewed = await getDisplayIntro();
+  //     setHasSeenIntro(viewed);
+  //   } catch (error) {
+  //     console.error("An error occurred during initialization:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    init();
-  }, []);
+  // useEffect(() => {
+  //   init();
+  // }, []);
 
   if (hasSeenIntro === null) {
     return (
